@@ -1,26 +1,24 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   fork_with_error_check.c                            :+:      :+:    :+:   */
+/*   ft_command_error.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: gade-oli <gade-oli@student.42madrid>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/09/25 12:07:59 by gade-oli          #+#    #+#             */
-/*   Updated: 2023/09/29 21:56:55 by gade-oli         ###   ########.fr       */
+/*   Created: 2023/09/29 21:54:23 by gade-oli          #+#    #+#             */
+/*   Updated: 2023/09/29 21:54:24 by gade-oli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/pipex.h"
 
-pid_t	fork_with_error_check()
+/**
+ * prints on the stderr the command and classic error message from bash
+ * returns the bash error code for this case as well
+*/
+int	ft_command_error(char *cmd)
 {
-	pid_t	res;
-
-	res = fork();
-	if (res == -1)
-	{
-		perror("fork error:");
-		exit(FAIL);
-	}
-	return (res);
+	ft_putstr_fd(cmd, 2);
+	ft_putstr_fd(": command not found", 2);
+	return (COMMAND_FAIL);
 }

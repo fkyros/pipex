@@ -1,17 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pipex_bonus.h                                      :+:      :+:    :+:   */
+/*   pipex.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: gade-oli <gade-oli@student.42madrid>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/18 21:10:13 by gade-oli          #+#    #+#             */
-/*   Updated: 2023/09/29 20:37:52 by gade-oli         ###   ########.fr       */
+/*   Updated: 2023/09/29 21:43:03 by gade-oli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef PIPEX_BONUS_H
-# define PIPEX_BONUS_H
+#ifndef PIPEX_H
+# define PIPEX_H
 
 # ifndef BONUS
 #  define BONUS 1
@@ -25,10 +25,10 @@
 # define SUCCESS 0
 # define FAIL 1
 
+# define COMMAND_FAIL 127
+
 # define READ_END 0
 # define WRITE_END 1
-
-# define COMMAND_FAIL 127 //TODO: confirmar codigo de error
 
 typedef struct s_pipex
 {
@@ -40,6 +40,16 @@ typedef struct s_pipex
 	char	*infile;
 	char	*outfile;
 }	t_pipex;
+
+int	pipex_logic(t_pipex pipex);
+
+char	**get_full_command(t_pipex pipex, int ncmd);
+
+void    free_command(char **matrix);
+
+int	ft_file_error(char *cmd);
+int	ft_error(char *msg);
+int	ft_command_error(char *cmd);
 
 void	pipe_with_error_check(int fd[2]);
 pid_t	fork_with_error_check();

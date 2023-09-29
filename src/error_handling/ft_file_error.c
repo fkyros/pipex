@@ -1,26 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   fork_with_error_check.c                            :+:      :+:    :+:   */
+/*   ft_file_error.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: gade-oli <gade-oli@student.42madrid>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/09/25 12:07:59 by gade-oli          #+#    #+#             */
-/*   Updated: 2023/09/29 21:56:55 by gade-oli         ###   ########.fr       */
+/*   Created: 2023/09/29 21:54:38 by gade-oli          #+#    #+#             */
+/*   Updated: 2023/09/29 21:54:39 by gade-oli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/pipex.h"
 
-pid_t	fork_with_error_check()
+/**
+ * returns the classic error message from bash as well as the error code
+*/
+int	ft_file_error(char *cmd)
 {
-	pid_t	res;
-
-	res = fork();
-	if (res == -1)
-	{
-		perror("fork error:");
-		exit(FAIL);
-	}
-	return (res);
+	ft_putstr_fd(cmd, 2);
+	ft_putstr_fd(": no such file or directory", 2);
+	return (FAIL);
 }

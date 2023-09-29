@@ -12,9 +12,15 @@ NAME = pipex
 CC = gcc
 CFLAGS = -Wall -Wextra -Werror -g
 
-HEADER = inc/pipex_bonus.h
+HEADER = inc/pipex.h
 
-SRC = src/pipex_bonus.c \
+SRC = src/pipex.c \
+	  src/main.c \
+	  src/envp.c \
+	  src/utils/free_command.c \
+	  src/error_handling/ft_command_error.c \
+	  src/error_handling/ft_error.c \
+	  src/error_handling/ft_file_error.c \
 	  src/funcs_with_error_check/pipe_with_error_check.c \
 	  src/funcs_with_error_check/fork_with_error_check.c
 
