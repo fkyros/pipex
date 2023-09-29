@@ -6,14 +6,16 @@
 /*   By: gade-oli <gade-oli@student.42madrid>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/18 21:10:13 by gade-oli          #+#    #+#             */
-/*   Updated: 2023/09/29 19:01:38 by gade-oli         ###   ########.fr       */
+/*   Updated: 2023/09/29 20:37:52 by gade-oli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef PIPEX_BONUS_H
 # define PIPEX_BONUS_H
 
-# define BONUS 1 //TODO: dejarlo a cero al finalizar el desarrollo
+# ifndef BONUS
+#  define BONUS 1
+# endif
 
 # include "../libft/libft.h"
 # include <unistd.h>

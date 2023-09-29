@@ -44,14 +44,14 @@ bin/%.o: src/%.c $(HEADER)
 
 $(NAME):	$(LIBFT) $(OBJ)
 	@echo $(BLUE)"compiling $(NAME)..."$(RESET)
-	$(CC) $(CFLAGS) $(OBJ) $(LIBFT) -D BONUS=0 -o $(NAME)
+	$(CC) $(CFLAGS) -D BONUS=0 $(OBJ) $(LIBFT) -o $(NAME)
 	@echo $(GREEN)"$(NAME) compiled!"$(RESET)
 
 bonus:	.bonus
 
 .bonus:	$(LIBFT) $(OBJ)
 	@echo $(BLUE)"compiling $(NAME) with bonus..."$(RESET)
-	$(CC) $(CFLAGS) $(OBJ) $(LIBFT) -D BONUS=1 -o $(NAME)
+	$(CC) $(CFLAGS) -D BONUS=1 $(OBJ) $(LIBFT) -o $(NAME)
 	@echo $(GREEN)"$(NAME) bonus compiled!"$(RESET)
 	@touch .bonus
 

@@ -6,7 +6,7 @@
 /*   By: gade-oli <gade-oli@student.42madrid>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/18 18:27:37 by gade-oli          #+#    #+#             */
-/*   Updated: 2023/09/29 19:29:30 by gade-oli         ###   ########.fr       */
+/*   Updated: 2023/09/29 21:09:03 by gade-oli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,8 +110,13 @@ char	**get_full_command(t_pipex pipex, int ncmd)
 	char	**res;
 	char	*full_cmd_path;
 	char	*tmp;
+	int		desp;
 
-	raw_command = pipex.argv[ncmd];
+	if (!pipex.here_doc)
+		desp = 2;
+	else
+		desp = 3;
+	raw_command = pipex.argv[ncmd + desp];
 	if (!raw_command)
 		return (NULL);
 	res = ft_split(raw_command, ' ');
@@ -122,10 +127,10 @@ char	**get_full_command(t_pipex pipex, int ncmd)
 		|| !ft_strncmp("../", raw_command,3)
 		|| !ft_strncmp("~/", raw_command,2))
 		return (res);
-	full_cmd_path = get_commands_full_path(raw_command, pipex.envp);
+	full_cmd_path = get_commands_full_path(res[0], pipex.envp);
 	if (!full_cmd_path)
         return (res);
-    if (!ft_strncmp(full_cmd_path, raw_command, ft_strlen(raw_command))
+    if (ft_strcmp(full_cmd_path, raw_command) == 0
         && access(raw_command, F_OK) == 0)
         raw_command = ft_strjoin("./", raw_command);
     tmp = *res;
@@ -145,9 +150,9 @@ int	first_child(t_pipex pipex, int fd[2])
 	int		infile_fd;
 
 	pid = fork_with_error_check();
+		cmd = get_full_command(pipex, 0);
 	if (pid == 0)
 	{
-		cmd = get_full_command(pipex, 0);
 		if (!cmd)
 			return (ft_error("error: first command not available")); //TODO: print error msg with param
 		infile_fd = open(pipex.infile, O_RDONLY);
@@ -173,9 +178,9 @@ void	middle_child(t_pipex pipex, int ncmd, int fd_to_write_in)
 	pid_t	pid;
 
 	pid = fork_with_error_check();
+		cmd = get_full_command(pipex, ncmd);
 	if (pid == 0)
 	{
-		cmd = get_full_command(pipex, ncmd);
 		if (!cmd)
 		{
 			ft_error("error: command(s) in the middle doesn't exist");
@@ -200,9 +205,9 @@ int	last_child(t_pipex pipex)
 	int		outfile_fd;
 
 	pid = fork_with_error_check();
+		cmd = get_full_command(pipex, pipex.ncmds - 1);
 	if (pid == 0)
 	{
-		cmd = get_full_command(pipex, pipex.ncmds - 1);
 		if (!cmd)
 			return (ft_error("error: last command not available"));
 		outfile_fd = open(pipex.outfile, O_CREAT | O_TRUNC | O_WRONLY, 0664);
@@ -217,6 +222,7 @@ int	last_child(t_pipex pipex)
 		perror("last child: fail executing command");
 		exit(FAIL);
 	}
+	close(pipex.fd_to_read_from);
 	return (pid);
 }
 
@@ -226,11 +232,12 @@ int	pipex_bonus(t_pipex pipex)
 	int 	i;
 	int		fd[2];
 	pid_t	pid;
+	int		status;
 
 	pipe_with_error_check(fd);
 	pipex.fd_to_read_from = first_child(pipex, fd);
 	i = 1;
-	while (i < pipex.ncmds - 2)
+	while (i < pipex.ncmds - 1)
 	{
 		pipe_with_error_check(fd);
 		pid = fork_with_error_check();
@@ -243,9 +250,10 @@ int	pipex_bonus(t_pipex pipex)
 	}
 	//TODO: parent wait and frees
 	pid = last_child(pipex);
+	waitpid(pid, &status, 0);
 	res = 0;
 	if (WIFEXITED(pid))
-		res = WEXITSTATUS(pid);
+		res = WEXITSTATUS(status);
 	return (res);
 }
 
@@ -255,15 +263,17 @@ int	main(int argc, char **argv, char **envp)
 	int res;
 
 	if (!BONUS && argc != 5)
-		return (ft_error("error format: ./pipex infile cmd1 cmd2 outfile"));
-	if (BONUS && ft_strcmp(argv[1], "here_doc") && argc < 5)
-		return (ft_error("error format: ./pipex infile cmd1 cmd2 ... cmdn outfile"));
+		return (ft_error("error format: ./pipex infile cmd1 cmd2 outfile\n"));
+	if (BONUS && ft_strcmp(argv[1], "here_doc") && argc < 4)
+		return (ft_error("error format: ./pipex infile cmd1 cmd2 ... cmdn outfile\n"));
+	if (BONUS && !ft_strcmp(argv[1], "here_doc") && argc != 6)
+		return (ft_error("error format: ./pipex here_doc LIMITER cmd1 cmd2 outfile\n"));
 	pipex.envp = envp;
 	pipex.argv = argv;
 	pipex.here_doc = 0;
 	if (argc >= 6 && !ft_strcmp(argv[1], "here_doc"))
 		pipex.here_doc = 1;
-	if (BONUS && !pipex.here_doc)
+	if ((BONUS && !pipex.here_doc) || (!BONUS && argc == 5))
 	{
 		pipex.infile = argv[1];
 		pipex.outfile = argv[argc - 1];
@@ -273,7 +283,6 @@ int	main(int argc, char **argv, char **envp)
 	else
 		res = 255;
 	//TODO: implement here_doc
-	//TODO: implement (re-use) no bonus -> 2 commands only
-	fre();
+	//fre();
 	return (res);
 }
