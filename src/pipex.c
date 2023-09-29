@@ -6,7 +6,7 @@
 /*   By: gade-oli <gade-oli@student.42madrid>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/18 18:27:37 by gade-oli          #+#    #+#             */
-/*   Updated: 2023/09/29 21:43:16 by gade-oli         ###   ########.fr       */
+/*   Updated: 2023/09/29 22:04:05 by gade-oli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ int	first_child(t_pipex pipex, int fd[2])
 			return (ft_command_error(cmd[0]));
 		infile_fd = open(pipex.infile, O_RDONLY);
 		if (infile_fd == -1)
-			return ft_file_error(pipex.infile);
+			return (ft_file_error(pipex.infile));
 		close(fd[READ_END]);
 		dup2(infile_fd, STDIN_FILENO);
 		close(infile_fd);
@@ -86,7 +86,7 @@ int	last_child(t_pipex pipex)
 			return (ft_command_error(cmd[0]));
 		outfile_fd = open(pipex.outfile, O_CREAT | O_TRUNC | O_WRONLY, 0664);
 		if (outfile_fd == -1)
-			return ft_file_error(pipex.infile);
+			return (ft_file_error(pipex.infile));
 		dup2(pipex.fd_to_read_from, STDIN_FILENO);
 		close(pipex.fd_to_read_from);
 		dup2(outfile_fd, STDOUT_FILENO);
@@ -102,7 +102,7 @@ int	last_child(t_pipex pipex)
 int	pipex_logic(t_pipex pipex)
 {
 	int		res;
-	int 	i;
+	int		i;
 	int		fd[2];
 	pid_t	pid;
 	int		status;

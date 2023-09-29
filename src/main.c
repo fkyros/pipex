@@ -6,21 +6,21 @@
 /*   By: gade-oli <gade-oli@student.42madrid>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/29 21:54:51 by gade-oli          #+#    #+#             */
-/*   Updated: 2023/09/29 21:54:52 by gade-oli         ###   ########.fr       */
+/*   Updated: 2023/09/29 22:05:50 by gade-oli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/pipex.h"
 
-void    fre(void)
+void	fre(void)
 {
-    system("leaks -q pipex");
+	system("leaks -q pipex");
 }
 
 int	main(int argc, char **argv, char **envp)
 {
 	t_pipex	pipex;
-	int res;
+	int		res;
 
 	if (!BONUS && argc != 5)
 		return (ft_error("error format: ./pipex infile cmd1 cmd2 outfile\n"));

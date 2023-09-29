@@ -6,13 +6,13 @@
 /*   By: gade-oli <gade-oli@student.42madrid>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/25 12:07:59 by gade-oli          #+#    #+#             */
-/*   Updated: 2023/09/29 21:56:55 by gade-oli         ###   ########.fr       */
+/*   Updated: 2023/09/29 22:01:38 by gade-oli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../inc/pipex.h"
 
-pid_t	fork_with_error_check()
+pid_t	fork_with_error_check(void)
 {
 	pid_t	res;
 
