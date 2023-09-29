@@ -6,7 +6,7 @@
 /*   By: gade-oli <gade-oli@student.42madrid>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/18 21:10:13 by gade-oli          #+#    #+#             */
-/*   Updated: 2023/09/25 12:44:38 by gade-oli         ###   ########.fr       */
+/*   Updated: 2023/09/29 19:01:38 by gade-oli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 # include "../libft/libft.h"
 # include <unistd.h>
 # include <fcntl.h>
+# include <stdio.h>
 
 # define SUCCESS 0
 # define FAIL 1
@@ -39,6 +40,6 @@ typedef struct s_pipex
 }	t_pipex;
 
 void	pipe_with_error_check(int fd[2]);
-void	fork_with_error_check();
+pid_t	fork_with_error_check();
 
 #endif

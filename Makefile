@@ -15,7 +15,8 @@ CFLAGS = -Wall -Wextra -Werror -g
 HEADER = inc/pipex_bonus.h
 
 SRC = src/pipex_bonus.c \
-	  src/funcs_with_error_check/pipe_with_error_check.c
+	  src/funcs_with_error_check/pipe_with_error_check.c \
+	  src/funcs_with_error_check/fork_with_error_check.c
 
 OBJ = $(SRC:src/%.c=bin/%.o)
 
@@ -44,7 +45,7 @@ bin/%.o: src/%.c $(HEADER)
 $(NAME):	$(LIBFT) $(OBJ)
 	@echo $(BLUE)"compiling $(NAME)..."$(RESET)
 	$(CC) $(CFLAGS) $(OBJ) $(LIBFT) -D BONUS=0 -o $(NAME)
-	@echo "$(GREEN)$(NAME) compiled!$(RESET)"
+	@echo $(GREEN)"$(NAME) compiled!"$(RESET)
 
 bonus:	.bonus
 

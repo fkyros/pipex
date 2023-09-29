@@ -1,19 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pipex.c                                            :+:      :+:    :+:   */
+/*   pipex_bonus.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: gade-oli <gade-oli@student.42madrid>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/18 18:27:37 by gade-oli          #+#    #+#             */
-/*   Updated: 2023/09/25 13:44:42 by gade-oli         ###   ########.fr       */
+/*   Updated: 2023/09/29 19:29:30 by gade-oli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/pipex_bonus.h"
 
 //TODO: quitar "bonus" del nombre?
-//TODO: error control
+
+void    fre(void)
+{
+    system("leaks -q pipex");
+}
 
 /**
  * prints in stderr the message given and returns the failure code
@@ -24,31 +28,110 @@ int	ft_error(char *msg)
 	return (FAIL);
 }
 
+void    free_command(char **matrix)
+{
+    int i;
+
+    if (!matrix)
+        return ;
+    i = 0;
+    while (matrix[i])
+    {
+        free(matrix[i]);
+        i++;
+    }
+    free(matrix);
+}
+
+/**
+ * given the enviromental variable, returns all the folders the PATH has
+ */
+char    **get_paths_from_envp(char **envp)
+{
+    char    *path;
+    char    **dir_bins;
+    int     i;
+
+    if (!envp)
+        return (NULL);
+    path = NULL;
+    i = 0;
+    while (!path && envp[i])
+    {
+        if (ft_strnstr(envp[i], "PATH=", 5))
+            path = envp[i];
+        i++;
+    }
+    if (!path)
+        return (NULL);
+    dir_bins = ft_split(path, ':');
+    return (dir_bins);
+}
+
+/**
+ * returns the full path of a command, given the enviroment variables
+ */
+char    *get_commands_full_path(char *command, char **envp)
+{
+    char    *res;
+    char    **dir_bins;
+    int     permitted;
+    int     i;
+    char    *tmp;
+
+    dir_bins = get_paths_from_envp(envp);
+    if (!dir_bins)
+        return (command);
+    permitted = -1;
+    i = 0;
+    while (permitted == -1 && dir_bins[i])
+    {
+        tmp = ft_strjoin(dir_bins[i], "/");
+        res = ft_strjoin(tmp, command);
+        free(tmp);
+        permitted = access(res, X_OK);
+        if (permitted == -1)
+            free(res);
+        i++;
+    }
+    free_command(dir_bins);
+    if (permitted == -1)
+        return (command);
+    return (res);
+}
+
 /**
  * returns a char matrix of the given command
  * with the executable path
  */
 char	**get_full_command(t_pipex pipex, int ncmd)
 {
-	char	*raw_cmd;
-	int		desp;
+	char	*raw_command;
 	char	**res;
+	char	*full_cmd_path;
+	char	*tmp;
 
-	if (!pipex.heredoc)
-		desp = 2;
-	else
-		desp = 3;
+	raw_command = pipex.argv[ncmd];
 	if (!raw_command)
 		return (NULL);
-	res = ft_spit(raw_command);
+	res = ft_split(raw_command, ' ');
 	if (!res)
 		return (NULL);
-	if (!ft_strncmp("/", 1)
-		|| !ft_strncmp("./", 2)
-		|| !ft_strncmp("../", 3)
-		|| !ft_strncmp("~/", 2))
+	if (!ft_strncmp("/", raw_command, 1)
+		|| !ft_strncmp("./", raw_command, 2)
+		|| !ft_strncmp("../", raw_command,3)
+		|| !ft_strncmp("~/", raw_command,2))
 		return (res);
-	//TODO: get the commands path with envp varible
+	full_cmd_path = get_commands_full_path(raw_command, pipex.envp);
+	if (!full_cmd_path)
+        return (res);
+    if (!ft_strncmp(full_cmd_path, raw_command, ft_strlen(raw_command))
+        && access(raw_command, F_OK) == 0)
+        raw_command = ft_strjoin("./", raw_command);
+    tmp = *res;
+    *res = full_cmd_path;
+    free(tmp);
+	return (res);
 }
 
 /**
@@ -61,40 +144,100 @@ int	first_child(t_pipex pipex, int fd[2])
 	pid_t	pid;
 	int		infile_fd;
 
-	cmd = get_full_command(pipex, 0);
-	pid = fork_with_error_checl();
+	pid = fork_with_error_check();
 	if (pid == 0)
 	{
+		cmd = get_full_command(pipex, 0);
 		if (!cmd)
-			return (ft_error("error: first command not available"));
+			return (ft_error("error: first command not available")); //TODO: print error msg with param
 		infile_fd = open(pipex.infile, O_RDONLY);
 		//TODO: gestionar fd invalido?? o lo hace execve??
+		if (infile_fd == -1)
+			printf("infile fd no valido, no me encargo lol\n"); //TODO: quitar
+		close(fd[READ_END]);
+		dup2(infile_fd, STDIN_FILENO);
+		close(infile_fd);
+		dup2(fd[WRITE_END], STDOUT_FILENO);
+		close(fd[WRITE_END]);
 		execve(cmd[0], cmd, pipex.envp);
+		perror("first child: fail executing command");
+		exit(FAIL);
 	}
-	close(fd[1]);
-	return (fd[0]);
+	close(fd[WRITE_END]);
+	return (fd[READ_END]);
+}
+
+void	middle_child(t_pipex pipex, int ncmd, int fd_to_write_in)
+{
+	char	**cmd;
+	pid_t	pid;
+
+	pid = fork_with_error_check();
+	if (pid == 0)
+	{
+		cmd = get_full_command(pipex, ncmd);
+		if (!cmd)
+		{
+			ft_error("error: command(s) in the middle doesn't exist");
+			return ;
+		}
+		dup2(pipex.fd_to_read_from, STDIN_FILENO);
+		close(pipex.fd_to_read_from);
+		dup2(fd_to_write_in, STDOUT_FILENO);
+		close(fd_to_write_in);
+		execve(cmd[0], cmd, pipex.envp);
+		perror("middle child: fail executing command");
+		exit(FAIL);
+	}
+	close(fd_to_write_in);
+	close(pipex.fd_to_read_from);
+}
+
+int	last_child(t_pipex pipex)
+{
+	char	**cmd;
+	pid_t	pid;
+	int		outfile_fd;
+
+	pid = fork_with_error_check();
+	if (pid == 0)
+	{
+		cmd = get_full_command(pipex, pipex.ncmds - 1);
+		if (!cmd)
+			return (ft_error("error: last command not available"));
+		outfile_fd = open(pipex.outfile, O_CREAT | O_TRUNC | O_WRONLY, 0664);
+		//TODO: gestionar fd invalido?? o lo hace execve??
+		if (outfile_fd == -1)
+			printf("infile fd no valido, no me encargo lol\n"); //TODO: quitar
+		dup2(pipex.fd_to_read_from, STDIN_FILENO);
+		close(pipex.fd_to_read_from);
+		dup2(outfile_fd, STDOUT_FILENO);
+		close(outfile_fd);
+		execve(cmd[0], cmd, pipex.envp);
+		perror("last child: fail executing command");
+		exit(FAIL);
+	}
+	return (pid);
 }
 
 int	pipex_bonus(t_pipex pipex)
 {
 	int		res;
 	int 	i;
-	int		fd_write;
 	int		fd[2];
 	pid_t	pid;
 
 	pipe_with_error_check(fd);
 	pipex.fd_to_read_from = first_child(pipex, fd);
 	i = 1;
-	while (i < pipex.ncmds - 1)
+	while (i < pipex.ncmds - 2)
 	{
-		//TODO: implement middle child: get the read end from previous child from pipe
-		//father makes all the pipes and fork
 		pipe_with_error_check(fd);
 		pid = fork_with_error_check();
 		if (pid == 0)
-			middle_child(pipex); //TODO
+			middle_child(pipex, i, fd[WRITE_END]);
 		pipex.fd_to_read_from = fd[READ_END];
+		close(fd[WRITE_END]);
 		//TODO: gestionar fds
 		i++;
 	}
@@ -127,7 +270,10 @@ int	main(int argc, char **argv, char **envp)
 		pipex.ncmds = argc - 3;
 		res = pipex_bonus(pipex);
 	}
+	else
+		res = 255;
 	//TODO: implement here_doc
 	//TODO: implement (re-use) no bonus -> 2 commands only
+	fre();
 	return (res);
 }
