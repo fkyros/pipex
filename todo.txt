@@ -1,0 +1,6 @@
+pruebas:
+- no ejecuta el primer ni el ultimo comando si el fichero a abrir no se puede abrir
+
+falla:
+- cat leyendo de /dev/fd/0
+- mostrar mensaje de error cuando el comando a ejecutar es ""

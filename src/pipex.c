@@ -6,7 +6,7 @@
 /*   By: gade-oli <gade-oli@student.42madrid>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/18 18:27:37 by gade-oli          #+#    #+#             */
-/*   Updated: 2023/09/29 22:04:05 by gade-oli         ###   ########.fr       */
+/*   Updated: 2023/10/03 21:19:07 by gade-oli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,14 +25,14 @@ int	first_child(t_pipex pipex, int fd[2])
 	int		infile_fd;
 
 	pid = fork_with_error_check();
-		cmd = get_full_command(pipex, 0);
 	if (pid == 0)
 	{
-		if (!cmd)
-			return (ft_command_error(cmd[0]));
+		cmd = get_full_command(pipex, 0);
+		if (!cmd || !cmd[0])
+			exit(ft_command_error(cmd[0]));
 		infile_fd = open(pipex.infile, O_RDONLY);
 		if (infile_fd == -1)
-			return (ft_file_error(pipex.infile));
+			exit(ft_file_error(pipex.infile));
 		close(fd[READ_END]);
 		dup2(infile_fd, STDIN_FILENO);
 		close(infile_fd);
@@ -55,7 +55,7 @@ void	middle_child(t_pipex pipex, int ncmd, int fd_to_write_in)
 	if (pid == 0)
 	{
 		cmd = get_full_command(pipex, ncmd);
-		if (!cmd)
+		if (!cmd || !cmd[0])
 		{
 			ft_command_error(cmd[0]);
 			return ;
@@ -82,11 +82,11 @@ int	last_child(t_pipex pipex)
 	if (pid == 0)
 	{
 		cmd = get_full_command(pipex, pipex.ncmds - 1);
-		if (!cmd)
-			return (ft_command_error(cmd[0]));
+		if (!cmd || !cmd[0])
+			exit(ft_command_error(cmd[0]));
 		outfile_fd = open(pipex.outfile, O_CREAT | O_TRUNC | O_WRONLY, 0664);
 		if (outfile_fd == -1)
-			return (ft_file_error(pipex.infile));
+			exit(ft_file_error(pipex.infile));
 		dup2(pipex.fd_to_read_from, STDIN_FILENO);
 		close(pipex.fd_to_read_from);
 		dup2(outfile_fd, STDOUT_FILENO);
@@ -113,15 +113,11 @@ int	pipex_logic(t_pipex pipex)
 	while (i < pipex.ncmds - 1)
 	{
 		pipe_with_error_check(fd);
-		pid = fork_with_error_check();
-		if (pid == 0)
-			middle_child(pipex, i, fd[WRITE_END]);
+		middle_child(pipex, i, fd[WRITE_END]);
 		pipex.fd_to_read_from = fd[READ_END];
-		close(fd[WRITE_END]);
-		//TODO: gestionar fds
 		i++;
 	}
-	//TODO: parent wait and frees
+	//TODO: parent wait and frees?
 	pid = last_child(pipex);
 	waitpid(pid, &status, 0);
 	res = 0;

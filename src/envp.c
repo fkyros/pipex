@@ -6,7 +6,7 @@
 /*   By: gade-oli <gade-oli@student.42madrid>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/29 21:54:08 by gade-oli          #+#    #+#             */
-/*   Updated: 2023/09/29 22:10:25 by gade-oli         ###   ########.fr       */
+/*   Updated: 2023/10/03 18:49:05 by gade-oli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,7 +86,7 @@ char	**get_full_command(t_pipex pipex, int ncmd)
 	else
 		desp = 3;
 	raw_command = pipex.argv[ncmd + desp];
-	if (!raw_command)
+	if (raw_command ==  NULL)
 		return (NULL);
 	res = ft_split(raw_command, ' ');
 	if (!res)
