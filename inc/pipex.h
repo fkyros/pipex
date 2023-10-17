@@ -6,7 +6,7 @@
 /*   By: gade-oli <gade-oli@student.42madrid>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/18 21:10:13 by gade-oli          #+#    #+#             */
-/*   Updated: 2023/10/17 17:48:49 by gade-oli         ###   ########.fr       */
+/*   Updated: 2023/10/17 21:40:39 by gade-oli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,7 @@ typedef struct s_pipex
 	int		fd_to_read_from;
 	char	*infile;
 	char	*outfile;
+	char	*here_doc_eof;
 }	t_pipex;
 
 int	pipex_logic(t_pipex pipex);
@@ -55,5 +56,7 @@ int	ft_command_error(char *cmd);
 
 void	pipe_with_error_check(int fd[2]);
 pid_t	fork_with_error_check();
+
+int	here_doc(t_pipex pipex);
 
 #endif

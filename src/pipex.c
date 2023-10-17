@@ -6,7 +6,7 @@
 /*   By: gade-oli <gade-oli@student.42madrid>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/18 18:27:37 by gade-oli          #+#    #+#             */
-/*   Updated: 2023/10/17 21:00:35 by gade-oli         ###   ########.fr       */
+/*   Updated: 2023/10/17 22:00:23 by gade-oli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,9 +26,14 @@ int	first_child(t_pipex pipex, int fd[2])
 	if (pid == 0)
 	{
 		cmd = get_full_command(pipex, 0);
-		infile_fd = open(pipex.infile, O_RDONLY);
-		if (infile_fd == -1)
-			exit(ft_file_error(pipex.infile));
+		if (pipex.here_doc)
+			infile_fd = here_doc(pipex);
+		else
+		{
+			infile_fd = open(pipex.infile, O_RDONLY);
+			if (infile_fd == -1)
+				exit(ft_file_error(pipex.infile));
+		}
 		close(fd[READ_END]);
 		dup2(infile_fd, STDIN_FILENO);
 		close(infile_fd);
@@ -98,6 +103,8 @@ int	pipex_logic(t_pipex pipex)
 
 	pipe_with_error_check(fd);
 	pipex.fd_to_read_from = first_child(pipex, fd);
+	if (pipex.here_doc)
+		waitpid(ANY_CHILD, NULL, 0);
 	i = 1;
 	while (i < pipex.ncmds - 1)
 	{

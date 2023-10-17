@@ -17,6 +17,7 @@ HEADER = inc/pipex.h
 SRC = src/pipex.c \
 	  src/main.c \
 	  src/envp.c \
+	  src/here_doc.c \
 	  src/utils/free_command.c \
 	  src/error_handling/ft_command_error.c \
 	  src/error_handling/ft_error.c \
