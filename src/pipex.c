@@ -6,13 +6,11 @@
 /*   By: gade-oli <gade-oli@student.42madrid>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/18 18:27:37 by gade-oli          #+#    #+#             */
-/*   Updated: 2023/10/03 21:19:07 by gade-oli         ###   ########.fr       */
+/*   Updated: 2023/10/17 21:00:35 by gade-oli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/pipex.h"
-
-//TODO: quien gestiona si el fd es -1?? execve o yo??
 
 /**
  * executes the first command from the pipe and
@@ -28,8 +26,6 @@ int	first_child(t_pipex pipex, int fd[2])
 	if (pid == 0)
 	{
 		cmd = get_full_command(pipex, 0);
-		if (!cmd || !cmd[0])
-			exit(ft_command_error(cmd[0]));
 		infile_fd = open(pipex.infile, O_RDONLY);
 		if (infile_fd == -1)
 			exit(ft_file_error(pipex.infile));
@@ -55,11 +51,6 @@ void	middle_child(t_pipex pipex, int ncmd, int fd_to_write_in)
 	if (pid == 0)
 	{
 		cmd = get_full_command(pipex, ncmd);
-		if (!cmd || !cmd[0])
-		{
-			ft_command_error(cmd[0]);
-			return ;
-		}
 		dup2(pipex.fd_to_read_from, STDIN_FILENO);
 		close(pipex.fd_to_read_from);
 		dup2(fd_to_write_in, STDOUT_FILENO);
@@ -82,11 +73,9 @@ int	last_child(t_pipex pipex)
 	if (pid == 0)
 	{
 		cmd = get_full_command(pipex, pipex.ncmds - 1);
-		if (!cmd || !cmd[0])
-			exit(ft_command_error(cmd[0]));
 		outfile_fd = open(pipex.outfile, O_CREAT | O_TRUNC | O_WRONLY, 0664);
 		if (outfile_fd == -1)
-			exit(ft_file_error(pipex.infile));
+			exit(ft_file_error(pipex.outfile));
 		dup2(pipex.fd_to_read_from, STDIN_FILENO);
 		close(pipex.fd_to_read_from);
 		dup2(outfile_fd, STDOUT_FILENO);
@@ -117,11 +106,11 @@ int	pipex_logic(t_pipex pipex)
 		pipex.fd_to_read_from = fd[READ_END];
 		i++;
 	}
-	//TODO: parent wait and frees?
 	pid = last_child(pipex);
-	waitpid(pid, &status, 0);
+	while (pipex.ncmds-- > 0)
+		waitpid(ANY_CHILD, &status, 0);
 	res = 0;
-	if (WIFEXITED(pid))
+	if (WIFEXITED(status))
 		res = WEXITSTATUS(status);
 	return (res);
 }

@@ -6,7 +6,7 @@
 /*   By: gade-oli <gade-oli@student.42madrid>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/29 21:54:38 by gade-oli          #+#    #+#             */
-/*   Updated: 2023/10/03 20:34:01 by gade-oli         ###   ########.fr       */
+/*   Updated: 2023/10/17 20:45:50 by gade-oli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,6 @@
 int	ft_file_error(char *cmd)
 {
 	ft_putstr_fd(cmd, 2);
-	ft_putstr_fd(": no such file or directory\n", 2);
+	ft_putstr_fd(": permission denied\n", 2);
 	return (FAIL);
 }

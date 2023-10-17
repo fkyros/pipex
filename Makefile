@@ -25,6 +25,7 @@ SRC = src/pipex.c \
 	  src/funcs_with_error_check/fork_with_error_check.c
 
 OBJ = $(SRC:src/%.c=bin/%.o)
+OBJ_BONUS = $(SRC:src/%.c=bin_bonus/%.o)
 
 #libft----------------------------------------------------
 
@@ -46,18 +47,23 @@ $(LIBFT):	$(LIBFT_HEADER)
 bin/%.o: src/%.c $(HEADER)
 	@echo $(BLUE)"creating binaries..."$(RESET)
 	@mkdir -p $(@D)
-	$(CC) $(CFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) -D BONUS=0 -c $< -o $@
+
+bin_bonus/%.o: src/%.c $(HEADER)
+	@echo $(BLUE)"creating binaries..."$(RESET)
+	@mkdir -p $(@D)
+	$(CC) $(CFLAGS) -D BONUS=1 -c $< -o $@
 
 $(NAME):	$(LIBFT) $(OBJ)
 	@echo $(BLUE)"compiling $(NAME)..."$(RESET)
-	$(CC) $(CFLAGS) -D BONUS=0 $(OBJ) $(LIBFT) -o $(NAME)
+	$(CC) $(CFLAGS) $(OBJ) $(LIBFT) -o $(NAME)
 	@echo $(GREEN)"$(NAME) compiled!"$(RESET)
 
 bonus:	.bonus
 
-.bonus:	$(LIBFT) $(OBJ)
+.bonus:	$(LIBFT) $(OBJ_BONUS)
 	@echo $(BLUE)"compiling $(NAME) with bonus..."$(RESET)
-	$(CC) $(CFLAGS) -D BONUS=1 $(OBJ) $(LIBFT) -o $(NAME)
+	$(CC) $(CFLAGS) $(OBJ_BONUS) $(LIBFT) -o $(NAME)
 	@echo $(GREEN)"$(NAME) bonus compiled!"$(RESET)
 	@touch .bonus
 
@@ -65,6 +71,7 @@ clean:
 	@echo $(RED)"deleting binaries..."$(RESET)
 	@make clean --directory=$(LIBFT_DIR)
 	rm -rf bin/
+	rm -rf bin_bonus/
 	@rm -f .bonus
 
 fclean:	clean

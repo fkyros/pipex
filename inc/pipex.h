@@ -6,7 +6,7 @@
 /*   By: gade-oli <gade-oli@student.42madrid>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/18 21:10:13 by gade-oli          #+#    #+#             */
-/*   Updated: 2023/09/29 21:43:03 by gade-oli         ###   ########.fr       */
+/*   Updated: 2023/10/17 17:48:49 by gade-oli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 # define PIPEX_H
 
 # ifndef BONUS
-#  define BONUS 1
+#  define BONUS 0
 # endif
 
 # include "../libft/libft.h"
@@ -24,6 +24,8 @@
 
 # define SUCCESS 0
 # define FAIL 1
+
+# define ANY_CHILD -1
 
 # define COMMAND_FAIL 127
 
