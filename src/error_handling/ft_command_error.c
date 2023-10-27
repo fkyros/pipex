@@ -6,7 +6,7 @@
 /*   By: gade-oli <gade-oli@student.42madrid>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/29 21:54:23 by gade-oli          #+#    #+#             */
-/*   Updated: 2023/10/03 21:13:27 by gade-oli         ###   ########.fr       */
+/*   Updated: 2023/10/27 17:11:13 by gade-oli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,8 @@
 */
 int	ft_command_error(char *cmd)
 {
+	ft_putstr_fd("command not found: ", 2);
 	ft_putstr_fd(cmd, 2);
-	perror(": command not found\n");
+	ft_putstr_fd("\n", 2);
 	return (COMMAND_FAIL);
 }

@@ -6,7 +6,7 @@
 /*   By: gade-oli <gade-oli@student.42madrid>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/29 21:54:08 by gade-oli          #+#    #+#             */
-/*   Updated: 2023/10/03 18:49:05 by gade-oli         ###   ########.fr       */
+/*   Updated: 2023/10/27 18:19:06 by gade-oli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,6 +70,32 @@ char	*get_commands_full_path(char *command, char **envp)
 }
 
 /**
+ * returns how much to displace the array to get the argument, 
+ * given if the program has been executed with here_doc
+ */
+int	get_desp(t_pipex pipex)
+{
+	int	desp;
+
+	if (!pipex.here_doc)
+		desp = 2;
+	else
+		desp = 3;
+	return (desp);
+}
+
+/**
+ * returns if a string beggins with a local entry
+ */
+int	is_local_directory(char *raw_command)
+{
+	return (!ft_strncmp("/", raw_command, 1)
+		|| !ft_strncmp("./", raw_command, 2)
+		|| !ft_strncmp("../", raw_command, 3)
+		|| !ft_strncmp("~/", raw_command, 2));
+}
+
+/**
  * returns a char matrix of the given command
  * with the executable path
  */
@@ -79,28 +105,20 @@ char	**get_full_command(t_pipex pipex, int ncmd)
 	char	**res;
 	char	*full_cmd_path;
 	char	*tmp;
-	int		desp;
 
-	if (!pipex.here_doc)
-		desp = 2;
-	else
-		desp = 3;
-	raw_command = pipex.argv[ncmd + desp];
-	if (raw_command ==  NULL)
+	raw_command = pipex.argv[ncmd + get_desp(pipex)];
+	if (raw_command == NULL)
 		return (NULL);
 	res = ft_split(raw_command, ' ');
 	if (!res)
 		return (NULL);
-	if (!ft_strncmp("/", raw_command, 1)
-		|| !ft_strncmp("./", raw_command, 2)
-		|| !ft_strncmp("../", raw_command,3)
-		|| !ft_strncmp("~/", raw_command,2))
+	if (is_local_directory(raw_command))
 		return (res);
 	full_cmd_path = get_commands_full_path(res[0], pipex.envp);
 	if (!full_cmd_path)
 		return (res);
-	if (ft_strcmp(full_cmd_path, raw_command) == 0
-		&& access(raw_command, F_OK) == 0)
+	if (!ft_strcmp(full_cmd_path, raw_command)
+		&& access(raw_command, F_OK) == -1)
 		raw_command = ft_strjoin("./", raw_command);
 	tmp = *res;
 	*res = full_cmd_path;

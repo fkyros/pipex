@@ -6,7 +6,7 @@
 /*   By: gade-oli <gade-oli@student.42madrid>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/18 21:10:13 by gade-oli          #+#    #+#             */
-/*   Updated: 2023/10/17 21:40:39 by gade-oli         ###   ########.fr       */
+/*   Updated: 2023/10/27 17:32:33 by gade-oli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,21 +42,23 @@ typedef struct s_pipex
 	char	*infile;
 	char	*outfile;
 	char	*here_doc_eof;
+	int		outfile_oflag;
 }	t_pipex;
 
-int	pipex_logic(t_pipex pipex);
-
+int		pipex_logic(t_pipex pipex);
 char	**get_full_command(t_pipex pipex, int ncmd);
+int		here_doc(t_pipex pipex);
 
-void    free_command(char **matrix);
-
-int	ft_file_error(char *cmd);
-int	ft_error(char *msg);
-int	ft_command_error(char *cmd);
+void	free_command(char **matrix);
+int		ft_file_error(char *cmd);
+int		ft_error(char *msg);
+int		ft_command_error(char *cmd);
 
 void	pipe_with_error_check(int fd[2]);
-pid_t	fork_with_error_check();
+pid_t	fork_with_error_check(void);
 
-int	here_doc(t_pipex pipex);
+int		get_infile_fd(t_pipex pipex);
+int		get_oflags_last_child(t_pipex pipex);
+int		get_status_code(t_pipex pipex);
 
 #endif

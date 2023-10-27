@@ -23,7 +23,8 @@ SRC = src/pipex.c \
 	  src/error_handling/ft_error.c \
 	  src/error_handling/ft_file_error.c \
 	  src/funcs_with_error_check/pipe_with_error_check.c \
-	  src/funcs_with_error_check/fork_with_error_check.c
+	  src/funcs_with_error_check/fork_with_error_check.c \
+	  src/utils/pipex_logic_utils.c
 
 OBJ = $(SRC:src/%.c=bin/%.o)
 OBJ_BONUS = $(SRC:src/%.c=bin_bonus/%.o)
@@ -33,9 +34,6 @@ OBJ_BONUS = $(SRC:src/%.c=bin_bonus/%.o)
 LIBFT_DIR = libft/
 LIBFT = $(LIBFT_DIR)libft.a
 LIBFT_HEADER = $(LIBFT_DIR)libft.h
-
-#gnl------------------------------------------------------
-
 
 #recipes--------------------------------------------------
 
