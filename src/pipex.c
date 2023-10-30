@@ -87,7 +87,6 @@ int	pipex_logic(t_pipex pipex)
 {
 	int		i;
 	int		fd[2];
-	pid_t	pid;
 
 	pipe_with_error_check(fd);
 	pipex.fd_to_read_from = first_child(pipex, fd);
@@ -102,7 +101,7 @@ int	pipex_logic(t_pipex pipex)
 		i++;
 	}
 	i++;
-	pid = last_child(pipex);
+	last_child(pipex);
 	while (i-- > 0)
 		waitpid(ANY_CHILD, NULL, 0);
 	return (get_status_code(pipex));
