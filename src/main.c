@@ -6,16 +6,11 @@
 /*   By: gade-oli <gade-oli@student.42madrid>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/29 21:54:51 by gade-oli          #+#    #+#             */
-/*   Updated: 2023/10/27 17:26:19 by gade-oli         ###   ########.fr       */
+/*   Updated: 2023/11/13 14:53:23 by gade-oli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/pipex.h"
-
-void	fre(void)
-{
-	system("leaks -q pipex");
-}
 
 int	main(int argc, char **argv, char **envp)
 {
@@ -41,6 +36,5 @@ int	main(int argc, char **argv, char **envp)
 	pipex.outfile = argv[argc - 1];
 	pipex.envp = envp;
 	pipex.argv = argv;
-	fre();
 	return (pipex_logic(pipex));
 }

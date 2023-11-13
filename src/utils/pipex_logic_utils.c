@@ -6,7 +6,7 @@
 /*   By: gade-oli <gade-oli@student.42madrid>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/27 15:13:50 by gade-oli          #+#    #+#             */
-/*   Updated: 2023/10/27 18:21:04 by gade-oli         ###   ########.fr       */
+/*   Updated: 2023/11/13 14:59:41 by gade-oli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,7 @@ int	get_oflags_last_child(t_pipex pipex)
 	return (oflag);
 }
 
+/*
 int	get_status_code(t_pipex pipex)
 {
 	char	**last_cmd;
@@ -47,9 +48,7 @@ int	get_status_code(t_pipex pipex)
 	status = 0;
 	last_cmd = get_full_command(pipex, pipex.ncmds - 1);
 	if (access(last_cmd[0], F_OK) == -1)
-	{
 		status = 127;
-	}
 	free_command(last_cmd); //TODO: NO LEAKS?????
 	outfd = open(pipex.outfile, pipex.outfile_oflag, 0666); 
 	if (outfd == -1)
@@ -57,4 +56,4 @@ int	get_status_code(t_pipex pipex)
 	else
 		close(outfd);
 	return (status);
-}
+}*/
