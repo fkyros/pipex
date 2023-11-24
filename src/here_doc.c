@@ -6,7 +6,7 @@
 /*   By: gade-oli <gade-oli@student.42madrid>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/17 21:26:02 by gade-oli          #+#    #+#             */
-/*   Updated: 2023/10/27 15:38:47 by gade-oli         ###   ########.fr       */
+/*   Updated: 2023/11/24 11:00:01 by gade-oli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ int	here_doc(t_pipex pipex)
 			ft_putstr_fd("here_doc> ", 1);
 			str = get_next_line(STDIN_FILENO);
 			str[ft_strlen(str) - 1] = '\0';
-			if (ft_strcmp(str, pipex.here_doc_eof))
+			if (!ft_strcmp(str, pipex.here_doc_eof))
 				exit(SUCCESS);
 			else
 				str[ft_strlen(str)] = '\n';

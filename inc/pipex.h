@@ -6,7 +6,7 @@
 /*   By: gade-oli <gade-oli@student.42madrid>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/18 21:10:13 by gade-oli          #+#    #+#             */
-/*   Updated: 2023/10/27 17:32:33 by gade-oli         ###   ########.fr       */
+/*   Updated: 2023/11/24 10:40:10 by gade-oli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@
 # define ANY_CHILD -1
 
 # define COMMAND_FAIL 127
+# define FILE_FAIL 1
 
 # define READ_END 0
 # define WRITE_END 1

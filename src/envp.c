@@ -6,7 +6,7 @@
 /*   By: gade-oli <gade-oli@student.42madrid>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/29 21:54:08 by gade-oli          #+#    #+#             */
-/*   Updated: 2023/10/27 18:19:06 by gade-oli         ###   ########.fr       */
+/*   Updated: 2023/11/24 10:41:36 by gade-oli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,7 +118,7 @@ char	**get_full_command(t_pipex pipex, int ncmd)
 	if (!full_cmd_path)
 		return (res);
 	if (!ft_strcmp(full_cmd_path, raw_command)
-		&& access(raw_command, F_OK) == -1)
+		&& access(raw_command, F_OK) != -1)
 		raw_command = ft_strjoin("./", raw_command);
 	tmp = *res;
 	*res = full_cmd_path;

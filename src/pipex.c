@@ -6,7 +6,7 @@
 /*   By: gade-oli <gade-oli@student.42madrid>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/18 18:27:37 by gade-oli          #+#    #+#             */
-/*   Updated: 2023/11/13 15:00:19 by gade-oli         ###   ########.fr       */
+/*   Updated: 2023/11/24 10:41:08 by gade-oli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,6 +104,5 @@ int	pipex_logic(t_pipex pipex)
 	last_child(pipex);
 	while (i-- > 0)
 		waitpid(ANY_CHILD, NULL, 0);
-	//return (get_status_code(pipex));
-	return (WEXITSTATUS(pid));
+	return (get_status_code(pipex));
 }
